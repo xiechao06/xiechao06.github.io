@@ -79,4 +79,3 @@ theme: landscape
 deploy:
   type: git
   repo: git@github.com:xiechao06/xiechao06.github.io.git
-  branch: gh-pages
