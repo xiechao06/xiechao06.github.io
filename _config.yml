@@ -3,16 +3,16 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
+title: "Xiechao's Blog"
+subtitle: 
 description:
-author: John Doe
+author: Xie Chao
 language:
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://xiechao06.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
