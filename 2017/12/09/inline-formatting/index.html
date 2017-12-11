@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ANALYSIS OF INLINE ELEMENTS&#39; FORMATTING | Xiechao&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AbstractEach HTML element (acts as container) is actually a stack of line-boxes, the contained elements is stuffed into each line-box. In this article, we try to find out what makes the height of each">
+<meta name="keywords" content="css">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ANALYSIS OF INLINE ELEMENTS&#39; FORMATTING">
+<meta property="og:url" content="https://xiechao06.github.io/2017/12/09/inline-formatting/index.html">
+<meta property="og:site_name" content="Xiechao&#39;s Blog">
+<meta property="og:description" content="AbstractEach HTML element (acts as container) is actually a stack of line-boxes, the contained elements is stuffed into each line-box. In this article, we try to find out what makes the height of each">
+<meta property="og:image" content="https://xiechao06.github.io/assets/inline-elements-formatting/local-line-box.svg">
+<meta property="og:image" content="https://xiechao06.github.io/assets/inline-elements-formatting/spacing-maker.svg">
+<meta property="og:image" content="https://xiechao06.github.io/assets/inline-elements-formatting/inline-block-formatting.svg">
+<meta property="og:updated_time" content="2017-12-11T08:45:27.357Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ANALYSIS OF INLINE ELEMENTS&#39; FORMATTING">
+<meta name="twitter:description" content="AbstractEach HTML element (acts as container) is actually a stack of line-boxes, the contained elements is stuffed into each line-box. In this article, we try to find out what makes the height of each">
+<meta name="twitter:image" content="https://xiechao06.github.io/assets/inline-elements-formatting/local-line-box.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="Xiechao&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Xiechao&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://xiechao06.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-inline-formatting" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/09/inline-formatting/" class="article-date">
+  <time datetime="2017-12-09T04:50:23.000Z" itemprop="datePublished">2017-12-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ANALYSIS OF INLINE ELEMENTS&#39; FORMATTING
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p><em><br>Each HTML element (acts as container) is actually a stack of line-boxes, the contained elements is stuffed into each line-box. In this article, we try to find out what makes the height of each line-box, and how each element is aligned in line-box
+</em></p>
+<p><em>keywords</em>: strut, line box, content area, vertical align </p>
+<h1 id="Content-Area"><a href="#Content-Area" class="headerlink" title="Content Area"></a>Content Area</h1><p>Let’s start from the start point, there’s only one element in line-box:</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="xPvMdJ" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xPvMdJ" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xPvMdJ/" target="_blank" rel="noopener">xPvMdJ</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>Let checkout it out carefully, here we set <code>font-size: 100px</code>, but is this <code>span</code> element has a height of 100px? No!!!, it has a height of 164px. The reason<br>is elaborated in this great article <a href="https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align" target="_blank" rel="noopener">https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align</a>.<br>Here we only remember the facts:</p>
+<ol>
+<li><code>font-size</code> is relative to height of content area, but <strong>IS NOT</strong> the height of content area.</li>
+<li><em>ascender</em> plus <em>descender</em> is the height of the <strong>content area</strong>.</li>
+<li><strong>content area</strong> holds the text, whilst property <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/line-height" target="_blank" rel="noopener">line-height</a> <strong>contributes to the height of line-box</strong>,<br>and we call this height the <strong>local line-height</strong> of the element, and it makes the <strong>local line-box</strong> of the element. and content area is always aligned center in local line-box.</li>
+</ol>
+<p><img src="/assets/inline-elements-formatting/local-line-box.svg" alt="local line box" title="opt title"></p>
+<p><strong><em>note!!! content area is not the line box’s height, but as we have only element, we could consider these 2 value has the same value for now</em></strong></p>
+<p>Let’s go a little further, what is line-box’s height? 164px, and what is <em>span</em>‘s line height property? a special value: <code>normal</code>, which is also the <strong>default value</strong>. We could guess what does <em>normal</em> means: a value computed by browser, that could just accomodate (sometimes, a little bigger than) the content area.</p>
+<p>Now we comes to a problem: <strong><em>what is a proper value of line height?</em></strong></p>
+<p>As we said, <em>line height</em> contributes the height of line-box (only for inline elements, plus vertical-align). and usually, it is set to the times of <em>font-size</em>,  not the <em>height of content area</em>. so if the line-height is too small, two line-box may collapse. Here we got:<br>
+</p><p data-height="265" data-theme-id="0" data-slug-hash="XzvOyB" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="XzvOyB" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/XzvOyB/" target="_blank" rel="noopener">XzvOyB</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<br>As we said, padding won’t affect the height of line-box either.<br>
+<p data-height="265" data-theme-id="0" data-slug-hash="xPvMeB" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xPvMeB" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xPvMeB/" target="_blank" rel="noopener">xPvMeB</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<p></p>
+<h1 id="the-real-computation-of-height-of-line-box-and-vertical-align"><a href="#the-real-computation-of-height-of-line-box-and-vertical-align" class="headerlink" title="the real computation of height of line box and vertical-align"></a>the real computation of height of line box and vertical-align</h1><p>Start from this example:<br>
+</p><p data-height="265" data-theme-id="0" data-slug-hash="rYXRaQ" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="rYXRaQ" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/rYXRaQ/" target="_blank" rel="noopener">rYXRaQ</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<p></p>
+<p>You may wonder why there are 2 spacings below and up the <em>span</em> element, that is due to <strong><em>strut</em></strong> - an imagined, invisible and zero-width character inserted into container automatically. if there’s any elements in this container. here we give a more extrem example:</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="xPvBwN" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xPvBwN" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xPvBwN/" target="_blank" rel="noopener">xPvBwN</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>Even the contained element has no size, <em>strut</em> still works. And we could also comes to the conclusion: <strong><em>a line box has a height bigger than the strut’s content area</em></strong>, With the help of <em>strut</em>, we could enter the dangerous zone of <strong><em>vertical-align</em></strong>.</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="WXVmGd" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="WXVmGd" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/WXVmGd/" target="_blank" rel="noopener">WXVmGd</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>Let’s analysis this snippet: </p>
+<p>The first element, <code>spacing maker</code>, align its baseline to strut’s baseline, then browser found its line height is 4, so the line box’s height is expanded to 4 * 18px = 72px.</p>
+<p><img src="/assets/inline-elements-formatting/spacing-maker.svg" alt="spacing maker" title="opt title"></p>
+<p>here, we could see where <strong>line-box’s baseline</strong> is clearly.</p>
+<p>Then comes <em>middle</em>, align the middle point of content area to the line-box’s baseline plus half of x-height.<br>Then come <em>text-top</em>, align the top of content area to the <strong>strut</strong>‘s content area.<br>Then come <em>text-bottom</em>, align the bottom of content area to the <strong>strut</strong>‘s content area.<br>Then come <em>top</em>, align the top of content area to the top of line-box.<br>Then come <em>bottom</em>, align the top of content area to the bottom of line-box.</p>
+<p>As we could see, <strong><em>find out where is strut’s content area (top, bottom, baseline) and line-box is key to understand vertical-align</em></strong>. Now let’s analyse some more examples:</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="WXVBqE" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="WXVBqE" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/WXVBqE/" target="_blank" rel="noopener">WXVBqE</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>Without the leading x, you may be very confused why the last <code>span</code> goes up/down. But with it, you could see the relation between strut and line-box.</p>
+<p>Now we comes to the inline-box elements. property <em>height</em> but <em>line-height</em> contributes to the height of line-box, let’s check an example.</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="VroJeL" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="VroJeL" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/VroJeL/" target="_blank" rel="noopener">VroJeL</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>Let’s analysis what contributes to an inline-box element has a size and position:</p>
+<ol>
+<li><em>inline-box</em> element’s baseline is determined by its in-flow text.</li>
+<li>box instead of line-box contributes to the height of line-box, and its top/bottom edge is used to align vertically.</li>
+<li>line-height determins the relative position of box and local line-box. or line-box’s top edge reachs to the top edge of box.</li>
+</ol>
+<p>namely, for an inline-box element, align it vertically at first (top, bottom or baseline), then draw the box, then draw the local line-box. Here is an example of <code>vertical-align: top</code>.</p>
+<p><img src="/assets/inline-elements-formatting/inline-block-formatting.svg" alt="inline-block formatting" title="opt title"></p>
+<p>Now, let’s answer a common problem: what to do if we want align text vertically in the box of inline-block element? the answer is easy: make local line-box the same height of box. Since text is aligned in the middle automatically in local line-box.</p>
+
+<p data-height="265" data-theme-id="0" data-slug-hash="xpKRvM" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xpKRvM" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xpKRvM/" target="_blank" rel="noopener">xpKRvM</a> by 谢超 (<a href="https://codepen.io/xiechao06" target="_blank" rel="noopener">@xiechao06</a>) on <a href="https://codepen.io" target="_blank" rel="noopener">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+<p>more about inline-box’s baseline please refer to <a href="http://christopheraue.net/2014/03/05/vertical-align/" target="_blank" rel="noopener">http://christopheraue.net/2014/03/05/vertical-align/</a>.</p>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>To understand the inline-elements’ formatting problem, ask yourself the following questions:</p>
+<ol>
+<li>what is strut’s height, where its baseline is?</li>
+<li>for each contained element, the size of its local line-box/box, and where its baseling is?</li>
+<li>consider the baseline as fixed, where is the top/bottom edge of line-box?</li>
+</ol>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><a href="https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align" target="_blank" rel="noopener">https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align</a><br><a href="http://christopheraue.net/2014/03/05/vertical-align/" target="_blank" rel="noopener">http://christopheraue.net/2014/03/05/vertical-align/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://xiechao06.github.io/2017/12/09/inline-formatting/" data-id="cjb1yhkyo0001iotsiv20ne8o" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/css/">css</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/12/11/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/css/" style="font-size: 10px;">css</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/11/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/09/inline-formatting/">ANALYSIS OF INLINE ELEMENTS&#39; FORMATTING</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Xie Chao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
