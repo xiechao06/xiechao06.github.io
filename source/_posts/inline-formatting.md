@@ -28,6 +28,11 @@ Here we only remember the facts:
 
 1. `font-size` is relative to height of content area, but **IS NOT** the height of content area.
 2. *ascender* plus *descender* is the height of the **content area**.
+3. **content area** holds the text, whilst property [line-height](https://developer.mozilla.org/en-US/docs/Web/CSS/line-height) **contributes to the height of line-box**, 
+and we call this height the **local line-height** of the element, and it makes the **local line-box** of the element. and content area is always aligned center in local line-box.
+
+![local line box](/assets/inline-elements-formatting/local-line-box.svg "opt title")
+
 
 ***note!!! content area is not the line box's height, but as we have only element, we could consider these 2 value has the same value for now***
 
@@ -35,7 +40,7 @@ Let's go a little further, what is line-box's height? 164px, and what is *span*'
 
 Now we comes to a problem: ***what is a proper value of line height?***
 
-*line height* determines the height of line-box (only for inline elements). and usually, it is set to the times of *font-size*,  not the *height of content area*. so if the line-height is too small, two line-box may collapse. Here we got:
+As we said, *line height* contributes the height of line-box (only for inline elements, plus vertical-align). and usually, it is set to the times of *font-size*,  not the *height of content area*. so if the line-height is too small, two line-box may collapse. Here we got:
 {% raw %}
 <p data-height="265" data-theme-id="0" data-slug-hash="XzvOyB" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="XzvOyB" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/XzvOyB/">XzvOyB</a> by 谢超 (<a href="https://codepen.io/xiechao06">@xiechao06</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
@@ -45,9 +50,6 @@ As we said, padding won't affect the height of line-box either.
 <p data-height="265" data-theme-id="0" data-slug-hash="xPvMeB" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xPvMeB" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xPvMeB/">xPvMeB</a> by 谢超 (<a href="https://codepen.io/xiechao06">@xiechao06</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 {% endraw %}
-
-
-What about *inline-box* elements? Height of line-box is determined by [height](https://developer.mozilla.org/en-US/docs/Web/CSS/height), that is the only difference. but you may not notice the difference, since property `height` has a clever default value **auto**, which is equal to the height of content area. but to understand this, we must understand `vertical-align` at first, we will give the example in following parts.
 
 # the real computation of height of line box and vertical-align
 
@@ -64,7 +66,7 @@ You may wonder why there are 2 spacings below and up the *span* element, that is
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 {% endraw %}
 
-Even the contained element has no size, *strut* still works. With the help of *strut*, we could enter the dangerous zone of ***vertical-align***.
+Even the contained element has no size, *strut* still works. And we could also comes to the conclusion: ***a line box has a height bigger than the strut's content area***, With the help of *strut*, we could enter the dangerous zone of ***vertical-align***.
 
 {% raw %}
 <p data-height="265" data-theme-id="0" data-slug-hash="WXVmGd" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="WXVmGd" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/WXVmGd/">WXVmGd</a> by 谢超 (<a href="https://codepen.io/xiechao06">@xiechao06</a>) on <a href="https://codepen.io">CodePen</a>.</p>
@@ -94,28 +96,41 @@ As we could see, ***find out where is strut's content area (top, bottom, baselin
 
 Without the leading x, you may be very confused why the last `span` goes up/down. But with it, you could see the relation between strut and line-box.
 
-Now we comes back to the inline-box elements. As we said earlier, property *height* decides height of the element's content area, let's check an example.
+Now we comes to the inline-box elements. property *height* but *line-height* contributes to the height of line-box, let's check an example.
 
 {% raw %}
 <p data-height="265" data-theme-id="0" data-slug-hash="VroJeL" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="VroJeL" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/VroJeL/">VroJeL</a> by 谢超 (<a href="https://codepen.io/xiechao06">@xiechao06</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 {% endraw %}
 
-The confusing part is the second section, you could see, 
+Let's analysis what contributes to an inline-box element has a size and position:
 
+1. *inline-box* element's baseline is determined by its in-flow text.
+2. box instead of line-box contributes to the height of line-box, and its top/bottom edge is used to align vertically.
+3. line-height determins the relative position of box and local line-box. or line-box's top edge reachs to the top edge of box.
 
+namely, for an inline-box element, align it vertically at first (top, bottom or baseline), then draw the box, then draw the local line-box. Here is an example of `vertical-align: top`.
 
+![inline-block formatting](/assets/inline-elements-formatting/inline-block-formatting.svg "opt title")
 
-baseline of elements with no flow-in content.
+Now, let's answer a common problem: what to do if we want align text vertically in the box of inline-block element? the answer is easy: make local line-box the same height of box. Since text is aligned in the middle automatically in local line-box.
 
-height of line-box
+{% raw %}
+<p data-height="265" data-theme-id="0" data-slug-hash="xpKRvM" data-default-tab="css,result" data-user="xiechao06" data-embed-version="2" data-pen-title="xpKRvM" class="codepen">See the Pen <a href="https://codepen.io/xiechao06/pen/xpKRvM/">xpKRvM</a> by 谢超 (<a href="https://codepen.io/xiechao06">@xiechao06</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+{% endraw %}
 
-height vs line-height
+more about inline-box's baseline please refer to http://christopheraue.net/2014/03/05/vertical-align/.
 
+# Summary
+
+To understand the inline-elements' formatting problem, ask yourself the following questions:
+
+1. what is strut's height, where its baseline is?
+2. for each contained element, the size of its local line-box/box, and where its baseling is?
+3. consider the baseline as fixed, where is the top/bottom edge of line-box?
 
 # References
 
 [https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align](https://iamvdo.me/en/blog/css-font-metrics-line-height-and-vertical-align)
-
-
-
+[http://christopheraue.net/2014/03/05/vertical-align/](http://christopheraue.net/2014/03/05/vertical-align/)
